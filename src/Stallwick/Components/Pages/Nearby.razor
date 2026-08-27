@@ -1,0 +1,98 @@
+@page "/nearby"
+@rendermode InteractiveServer
+@using Stallwick.Services
+@inject ListingService Listings
+@inject IJSRuntime JS
+
+<PageTitle>Nearby listings</PageTitle>
+
+<h1>Nearby listings</h1>
+<p class="lead">Listings ordered by distance from where you are.</p>
+
+<div class="nearby-controls">
+    <button class="btn btn-primary" @onclick="UseMyLocationAsync" disabled="@isLoading">
+        Use my location
+    </button>
+    <div class="nearby-manual">
+        <label>
+            Latitude
+            <input class="form-control" type="number" step="any" @bind="latitude" />
+        </label>
+        <label>
+            Longitude
+            <input class="form-control" type="number" step="any" @bind="longitude" />
+        </label>
+        <button class="btn btn-outline-secondary" @onclick="LoadAsync" disabled="@isLoading">Search here</button>
+    </div>
+</div>
+
+@if (error is not null)
+{
+    <div class="alert alert-warning" role="alert">@error</div>
+}
+
+@if (isLoading)
+{
+    <p><em>Finding listings near you…</em></p>
+}
+else if (results is not null)
+{
+    @if (results.Count == 0)
+    {
+        <p>No listings anywhere yet. <a href="sell">Post one.</a></p>
+    }
+    else
+    {
+        <div class="listing-grid">
+            @foreach (var result in results)
+            {
+                <ListingCard Listing="result.Listing" DistanceKm="result.DistanceKm" />
+            }
+        </div>
+    }
+}
+
+@code {
+    private double latitude;
+    private double longitude;
+    private bool isLoading;
+    private string? error;
+    private List<NearbyListing>? results;
+
+    private async Task UseMyLocationAsync()
+    {
+        error = null;
+        isLoading = true;
+        try
+        {
+            var position = await JS.InvokeAsync<GeolocationPosition>("stallwickGeolocation.getCurrentPosition");
+            latitude = position.Latitude;
+            longitude = position.Longitude;
+        }
+        catch (JSException ex)
+        {
+            error = $"Could not read your location ({ex.Message}). Enter coordinates manually instead.";
+            isLoading = false;
+            return;
+        }
+
+        isLoading = false;
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        error = null;
+        isLoading = true;
+        try
+        {
+            results = await Listings.GetNearbyAsync(latitude, longitude);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private sealed record GeolocationPosition(double Latitude, double Longitude);
+}

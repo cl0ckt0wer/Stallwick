@@ -1,0 +1,115 @@
+@page "/sell"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using Stallwick.Data
+@using Stallwick.Services
+@inject ListingService Listings
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>Post something for sale</PageTitle>
+
+<h1>Post something for sale</h1>
+
+<EditForm Model="input" OnValidSubmit="SubmitAsync" FormName="post-listing" class="listing-form">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label>
+        Title
+        <InputText class="form-control" @bind-Value="input.Title" />
+    </label>
+    <label>
+        Description
+        <InputTextArea class="form-control" rows="4" @bind-Value="input.Description" />
+    </label>
+    <label>
+        Price
+        <InputNumber class="form-control" @bind-Value="input.Price" />
+    </label>
+    <label>
+        Photo URL
+        <InputText class="form-control" @bind-Value="input.ImageUrl" placeholder="https://…" />
+    </label>
+    <label>
+        Location name
+        <InputText class="form-control" @bind-Value="input.LocationName" placeholder="Portland, OR" />
+    </label>
+    <div class="listing-form-coords">
+        <label>
+            Latitude
+            <InputNumber class="form-control" @bind-Value="input.Latitude" />
+        </label>
+        <label>
+            Longitude
+            <InputNumber class="form-control" @bind-Value="input.Longitude" />
+        </label>
+        <button type="button" class="btn btn-outline-secondary" @onclick="UseMyLocationAsync">
+            Use my location
+        </button>
+    </div>
+
+    @if (error is not null)
+    {
+        <div class="alert alert-warning" role="alert">@error</div>
+    }
+
+    <button type="submit" class="btn btn-primary" disabled="@isSaving">Post listing</button>
+</EditForm>
+
+@code {
+    private readonly Listing input = new();
+    private bool isSaving;
+    private string? error;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private async Task UseMyLocationAsync()
+    {
+        error = null;
+        try
+        {
+            var position = await JS.InvokeAsync<GeolocationPosition>("stallwickGeolocation.getCurrentPosition");
+            input.Latitude = position.Latitude;
+            input.Longitude = position.Longitude;
+        }
+        catch (JSException ex)
+        {
+            error = $"Could not read your location ({ex.Message}). Enter coordinates manually instead.";
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (AuthenticationState is null)
+        {
+            return;
+        }
+
+        var state = await AuthenticationState;
+        var user = await UserManager.GetUserAsync(state.User);
+        if (user is null)
+        {
+            error = "You need to be signed in to post a listing.";
+            return;
+        }
+
+        isSaving = true;
+        try
+        {
+            input.SellerId = user.Id;
+            await Listings.CreateAsync(input);
+            Navigation.NavigateTo("browse");
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private sealed record GeolocationPosition(double Latitude, double Longitude);
+}

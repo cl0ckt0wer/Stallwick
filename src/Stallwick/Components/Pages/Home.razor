@@ -1,0 +1,44 @@
+@page "/"
+@using Stallwick.Data
+@using Stallwick.Services
+@inject ListingService Listings
+
+<PageTitle>Stallwick</PageTitle>
+
+<h1>Stallwick</h1>
+<p class="lead">Post your stuff for sale. Find what people are selling around you.</p>
+
+<p>
+    <a class="btn btn-primary" href="sell">Post a listing</a>
+    <a class="btn btn-outline-secondary" href="nearby">See what's nearby</a>
+</p>
+
+<h2>Latest listings</h2>
+
+@if (listings is null)
+{
+    <p><em>Loading listings…</em></p>
+}
+else if (listings.Count == 0)
+{
+    <p>No listings yet. <a href="sell">Post the first one.</a></p>
+}
+else
+{
+    <div class="listing-grid">
+        @foreach (var listing in listings)
+        {
+            <ListingCard Listing="listing" />
+        }
+    </div>
+    <p><a href="browse">Browse all listings</a></p>
+}
+
+@code {
+    private List<Listing>? listings;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listings = await Listings.GetRecentAsync(take: 12);
+    }
+}

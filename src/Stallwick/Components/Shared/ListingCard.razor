@@ -1,0 +1,37 @@
+@using Stallwick.Data
+
+<div class="listing-card">
+    <div class="listing-card-image">
+        @if (!string.IsNullOrWhiteSpace(Listing.ImageUrl))
+        {
+            <img src="@Listing.ImageUrl" alt="@Listing.Title" loading="lazy" />
+        }
+        else
+        {
+            <div class="listing-card-placeholder" aria-hidden="true">No photo</div>
+        }
+    </div>
+    <div class="listing-card-body">
+        <h3 class="listing-card-title">@Listing.Title</h3>
+        <p class="listing-card-price">@Listing.Price.ToString("C")</p>
+        <p class="listing-card-meta">
+            @Listing.LocationName
+            @if (DistanceKm is not null)
+            {
+                <span class="listing-card-distance">· @DistanceKm.Value.ToString("0.#") km away</span>
+            }
+        </p>
+        @if (!string.IsNullOrWhiteSpace(Listing.Description))
+        {
+            <p class="listing-card-description">@Listing.Description</p>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Listing Listing { get; set; } = default!;
+
+    [Parameter]
+    public double? DistanceKm { get; set; }
+}
