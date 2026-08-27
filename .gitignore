@@ -6,6 +6,12 @@
 # dotenv files
 .env
 
+# Devin local-only config
+.devin/*.local.json
+
+# Local infrastructure notes (contains ids / host info)
+.infrastructure
+
 # User-specific files
 *.rsuser
 *.suo
