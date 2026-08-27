@@ -23,6 +23,16 @@ dotnet run --project src/Stallwick
 
 The app applies EF Core migrations on startup and creates `src/Stallwick/Data/app.db` (gitignored). Register an account to post — email confirmation is disabled because no email sender is configured yet.
 
+## Container
+
+Images are published to GHCR on every push to `main` and on `v*` tags:
+
+```bash
+docker run -p 8080:8080 -v stallwick-data:/app/data ghcr.io/cl0ckt0wer/stallwick:latest
+```
+
+The app listens on port 8080 and keeps its SQLite database in `/app/data`, so mount a volume there to persist listings. Build locally with `docker build -t stallwick .`.
+
 ## Tests
 
 ```bash
