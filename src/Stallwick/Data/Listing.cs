@@ -18,10 +18,12 @@ public class Listing
 
     [Url]
     [StringLength(2000)]
+    [Display(Name = "Photo URL")]
     public string? ImageUrl { get; set; }
 
     [Required]
     [StringLength(120)]
+    [Display(Name = "Location name")]
     public string LocationName { get; set; } = string.Empty;
 
     [Range(-90, 90)]

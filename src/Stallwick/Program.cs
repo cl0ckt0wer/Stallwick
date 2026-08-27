@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -5,6 +6,12 @@ using Stallwick.Components;
 using Stallwick.Components.Account;
 using Stallwick.Data;
 using Stallwick.Services;
+
+// Prices and distances are formatted for a single culture; the invariant culture
+// renders currency as "¤450.00".
+var defaultCulture = CultureInfo.GetCultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 

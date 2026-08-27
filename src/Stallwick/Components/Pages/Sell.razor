@@ -61,7 +61,7 @@
 </EditForm>
 
 @code {
-    private readonly Listing input = new();
+    private Listing input = new();
     private bool isSaving;
     private string? error;
 
@@ -85,7 +85,7 @@
 
     private async Task SubmitAsync()
     {
-        if (AuthenticationState is null)
+        if (AuthenticationState is null || isSaving)
         {
             return;
         }
@@ -103,6 +103,8 @@
         {
             input.SellerId = user.Id;
             await Listings.CreateAsync(input);
+            // A saved entity already has an Id, so resubmitting it would collide.
+            input = new Listing();
             Navigation.NavigateTo("browse");
         }
         finally
