@@ -1,5 +1,4 @@
 @page "/sell"
-@rendermode InteractiveServer
 @attribute [Authorize]
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
@@ -12,53 +11,68 @@
 
 <PageTitle>Post something for sale</PageTitle>
 
-<h1>Post something for sale</h1>
+<MudText Typo="Typo.h4" GutterBottom="true">Post something for sale</MudText>
 
-<EditForm Model="input" OnValidSubmit="SubmitAsync" FormName="post-listing" class="listing-form">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<MudPaper Class="pa-6" Elevation="1" Style="max-width: 40rem;">
+    <EditForm Model="input" OnValidSubmit="SubmitAsync" FormName="post-listing">
+        <DataAnnotationsValidator />
 
-    <label>
-        Title
-        <InputText class="form-control" @bind-Value="input.Title" />
-    </label>
-    <label>
-        Description
-        <InputTextArea class="form-control" rows="4" @bind-Value="input.Description" />
-    </label>
-    <label>
-        Price
-        <InputNumber class="form-control" @bind-Value="input.Price" />
-    </label>
-    <label>
-        Photo URL
-        <InputText class="form-control" @bind-Value="input.ImageUrl" placeholder="https://…" />
-    </label>
-    <label>
-        Location name
-        <InputText class="form-control" @bind-Value="input.LocationName" placeholder="Portland, OR" />
-    </label>
-    <div class="listing-form-coords">
-        <label>
-            Latitude
-            <InputNumber class="form-control" @bind-Value="input.Latitude" />
-        </label>
-        <label>
-            Longitude
-            <InputNumber class="form-control" @bind-Value="input.Longitude" />
-        </label>
-        <button type="button" class="btn btn-outline-secondary" @onclick="UseMyLocationAsync">
-            Use my location
-        </button>
-    </div>
+        <MudGrid Spacing="3">
+            <MudItem xs="12">
+                <MudTextField Label="Title" @bind-Value="input.Title" For="@(() => input.Title)"
+                              Variant="Variant.Outlined" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField Label="Description" @bind-Value="input.Description" For="@(() => input.Description)"
+                              Variant="Variant.Outlined" Lines="4" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudNumericField T="decimal" Label="Price" @bind-Value="input.Price" For="@(() => input.Price)"
+                                 Variant="Variant.Outlined" HideSpinButtons="true" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudTextField Label="Photo URL" @bind-Value="input.ImageUrl" For="@(() => input.ImageUrl)"
+                              Variant="Variant.Outlined" Placeholder="https://…" />
+            </MudItem>
+            <MudItem xs="12">
+                <MudTextField Label="Location name" @bind-Value="input.LocationName"
+                              For="@(() => input.LocationName)" Variant="Variant.Outlined"
+                              Placeholder="Portland, OR" />
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudNumericField T="double" Label="Latitude" @bind-Value="input.Latitude"
+                                 For="@(() => input.Latitude)" Variant="Variant.Outlined"
+                                 HideSpinButtons="true" />
+            </MudItem>
+            <MudItem xs="12" sm="4">
+                <MudNumericField T="double" Label="Longitude" @bind-Value="input.Longitude"
+                                 For="@(() => input.Longitude)" Variant="Variant.Outlined"
+                                 HideSpinButtons="true" />
+            </MudItem>
+            <MudItem xs="12" sm="4" Class="d-flex align-center">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary"
+                           StartIcon="@Icons.Material.Filled.MyLocation" OnClick="UseMyLocationAsync">
+                    Use my location
+                </MudButton>
+            </MudItem>
+        </MudGrid>
 
-    @if (error is not null)
-    {
-        <div class="alert alert-warning" role="alert">@error</div>
-    }
+        @if (error is not null)
+        {
+            <MudAlert Severity="Severity.Warning" Class="mt-4">@error</MudAlert>
+        }
 
-    <button type="submit" class="btn btn-primary" disabled="@isSaving">Post listing</button>
-</EditForm>
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="mt-6"
+                   Disabled="isSaving"
+                   StartIcon="@(isSaving ? null : Icons.Material.Filled.AddCircle)">
+            @if (isSaving)
+            {
+                <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
+            }
+            Post listing
+        </MudButton>
+    </EditForm>
+</MudPaper>
 
 @code {
     private Listing input = new();

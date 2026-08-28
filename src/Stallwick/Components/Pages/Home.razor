@@ -5,33 +5,48 @@
 
 <PageTitle>Stallwick</PageTitle>
 
-<h1>Stallwick</h1>
-<p class="lead">Post your stuff for sale. Find what people are selling around you.</p>
+<MudText Typo="Typo.h3" GutterBottom="true">Stallwick</MudText>
+<MudText Typo="Typo.subtitle1" Class="mud-text-secondary">
+    Post your stuff for sale. Find what people are selling around you.
+</MudText>
 
-<p>
-    <a class="btn btn-primary" href="sell">Post a listing</a>
-    <a class="btn btn-outline-secondary" href="nearby">See what's nearby</a>
-</p>
+<div class="d-flex gap-2 flex-wrap my-4">
+    <MudButton Href="sell" Variant="Variant.Filled" Color="Color.Primary"
+               StartIcon="@Icons.Material.Filled.AddCircle">
+        Post a listing
+    </MudButton>
+    <MudButton Href="nearby" Variant="Variant.Outlined" Color="Color.Secondary"
+               StartIcon="@Icons.Material.Filled.NearMe">
+        See what's nearby
+    </MudButton>
+</div>
 
-<h2>Latest listings</h2>
+<MudText Typo="Typo.h5" GutterBottom="true">Latest listings</MudText>
 
 @if (listings is null)
 {
-    <p><em>Loading listings…</em></p>
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
 else if (listings.Count == 0)
 {
-    <p>No listings yet. <a href="sell">Post the first one.</a></p>
+    <MudAlert Severity="Severity.Info">
+        No listings yet. <MudLink Href="sell">Post the first one.</MudLink>
+    </MudAlert>
 }
 else
 {
-    <div class="listing-grid">
+    <MudGrid>
         @foreach (var listing in listings)
         {
-            <ListingCard Listing="listing" />
+            <MudItem xs="12" sm="6" md="4" lg="3">
+                <ListingCard Listing="listing" />
+            </MudItem>
         }
-    </div>
-    <p><a href="browse">Browse all listings</a></p>
+    </MudGrid>
+    <MudButton Href="browse" Variant="Variant.Text" Color="Color.Primary" Class="mt-4"
+               EndIcon="@Icons.Material.Filled.ArrowForward">
+        Browse all listings
+    </MudButton>
 }
 
 @code {
