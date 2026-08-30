@@ -1,31 +1,38 @@
 @using Stallwick.Data
 
-<div class="listing-card">
-    <div class="listing-card-image">
-        @if (!string.IsNullOrWhiteSpace(Listing.ImageUrl))
-        {
-            <img src="@Listing.ImageUrl" alt="@Listing.Title" loading="lazy" />
-        }
-        else
-        {
-            <div class="listing-card-placeholder" aria-hidden="true">No photo</div>
-        }
-    </div>
-    <div class="listing-card-body">
-        <h3 class="listing-card-title">@Listing.Title</h3>
-        <p class="listing-card-price">@Listing.Price.ToString("C")</p>
-        <p class="listing-card-meta">
-            @Listing.LocationName@if (DistanceKm is not null)
+<MudCard Elevation="1" Class="d-flex flex-column" Style="height: 100%;">
+    @if (!string.IsNullOrWhiteSpace(Listing.ImageUrl))
+    {
+        <MudCardMedia Image="@Listing.ImageUrl" Height="160" title="@Listing.Title" />
+    }
+    else
+    {
+        <MudPaper Elevation="0" Square="true"
+                  Class="d-flex align-center justify-center"
+                  Style="height: 160px; background: var(--mud-palette-background-gray);">
+            <MudText Typo="Typo.caption">No photo</MudText>
+        </MudPaper>
+    }
+    <MudCardContent>
+        <MudText Typo="Typo.subtitle1">@Listing.Title</MudText>
+        <MudText Typo="Typo.h6" Color="Color.Primary">@Listing.Price.ToString("C")</MudText>
+        <div class="d-flex align-center gap-1 flex-wrap mt-1">
+            <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Filled.Place" Variant="Variant.Text">
+                @Listing.LocationName
+            </MudChip>
+            @if (DistanceKm is not null)
             {
-                <span class="listing-card-distance"> · @DistanceKm.Value.ToString("0.#") km away</span>
+                <MudChip T="string" Size="Size.Small" Color="Color.Secondary" Variant="Variant.Text">
+                    @DistanceKm.Value.ToString("0.#") km away
+                </MudChip>
             }
-        </p>
+        </div>
         @if (!string.IsNullOrWhiteSpace(Listing.Description))
         {
-            <p class="listing-card-description">@Listing.Description</p>
+            <MudText Typo="Typo.body2" Class="mt-2 listing-card-description">@Listing.Description</MudText>
         }
-    </div>
-</div>
+    </MudCardContent>
+</MudCard>
 
 @code {
     [Parameter, EditorRequired]

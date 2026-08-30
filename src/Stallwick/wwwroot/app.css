@@ -58,80 +58,30 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
-.listing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
-    margin: 1rem 0 2rem;
-}
-
-.listing-card {
-    border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-}
-
-.listing-card-image img,
-.listing-card-placeholder {
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
     width: 100%;
-    height: 160px;
-    object-fit: cover;
-    display: block;
+    z-index: 1000;
 }
 
-.listing-card-placeholder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f1f3f5;
-    color: #868e96;
-    font-size: 0.85rem;
-}
-
-.listing-card-body {
-    padding: 0.75rem;
-}
-
-.listing-card-title {
-    font-size: 1rem;
-    margin: 0 0 0.25rem;
-}
-
-.listing-card-price {
-    font-weight: 600;
-    margin: 0 0 0.25rem;
-}
-
-.listing-card-meta {
-    color: #6c757d;
-    font-size: 0.85rem;
-    margin: 0 0 0.5rem;
-}
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
 
 .listing-card-description {
-    font-size: 0.9rem;
-    margin: 0;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
-}
-
-.listing-form,
-.nearby-controls {
-    max-width: 40rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.listing-form-coords,
-.nearby-manual {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-end;
-    flex-wrap: wrap;
 }

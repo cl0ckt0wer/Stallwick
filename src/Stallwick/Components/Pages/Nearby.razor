@@ -1,54 +1,68 @@
 @page "/nearby"
-@rendermode InteractiveServer
 @using Stallwick.Services
 @inject ListingService Listings
 @inject IJSRuntime JS
 
 <PageTitle>Nearby listings</PageTitle>
 
-<h1>Nearby listings</h1>
-<p class="lead">Listings ordered by distance from where you are.</p>
+<MudText Typo="Typo.h4" GutterBottom="true">Nearby listings</MudText>
+<MudText Typo="Typo.subtitle1" Class="mud-text-secondary mb-4">
+    Listings ordered by distance from where you are.
+</MudText>
 
-<div class="nearby-controls">
-    <button class="btn btn-primary" @onclick="UseMyLocationAsync" disabled="@isLoading">
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.MyLocation"
+               Disabled="isLoading" OnClick="UseMyLocationAsync">
         Use my location
-    </button>
-    <div class="nearby-manual">
-        <label>
-            Latitude
-            <input class="form-control" type="number" step="any" @bind="latitude" />
-        </label>
-        <label>
-            Longitude
-            <input class="form-control" type="number" step="any" @bind="longitude" />
-        </label>
-        <button class="btn btn-outline-secondary" @onclick="LoadAsync" disabled="@isLoading">Search here</button>
-    </div>
-</div>
+    </MudButton>
+
+    <MudGrid Class="mt-2" Spacing="2">
+        <MudItem xs="12" sm="4">
+            <MudNumericField T="double" Label="Latitude" @bind-Value="latitude" Variant="Variant.Outlined"
+                             HideSpinButtons="true" />
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudNumericField T="double" Label="Longitude" @bind-Value="longitude" Variant="Variant.Outlined"
+                             HideSpinButtons="true" />
+        </MudItem>
+        <MudItem xs="12" sm="4" Class="d-flex align-center">
+            <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Disabled="isLoading" OnClick="LoadAsync">
+                Search here
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
 
 @if (error is not null)
 {
-    <div class="alert alert-warning" role="alert">@error</div>
+    <MudAlert Severity="Severity.Warning" Class="mb-4">@error</MudAlert>
 }
 
 @if (isLoading)
 {
-    <p><em>Finding listings near you…</em></p>
+    <div class="d-flex align-center gap-2">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Small" />
+        <MudText Typo="Typo.body2">Finding listings near you…</MudText>
+    </div>
 }
 else if (results is not null)
 {
     @if (results.Count == 0)
     {
-        <p>No listings anywhere yet. <a href="sell">Post one.</a></p>
+        <MudAlert Severity="Severity.Info">
+            No listings anywhere yet. <MudLink Href="sell">Post one.</MudLink>
+        </MudAlert>
     }
     else
     {
-        <div class="listing-grid">
+        <MudGrid>
             @foreach (var result in results)
             {
-                <ListingCard Listing="result.Listing" DistanceKm="result.DistanceKm" />
+                <MudItem xs="12" sm="6" md="4" lg="3">
+                    <ListingCard Listing="result.Listing" DistanceKm="result.DistanceKm" />
+                </MudItem>
             }
-        </div>
+        </MudGrid>
     }
 }
 
