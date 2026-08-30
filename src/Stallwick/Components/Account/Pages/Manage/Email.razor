@@ -14,44 +14,39 @@
 
 <PageTitle>Manage email</PageTitle>
 
-<h3>Manage email</h3>
+<MudText Typo="Typo.h5" GutterBottom="true">Manage email</MudText>
 
 <StatusMessage Message="@message"/>
-<div class="row">
-    <div class="col-xl-6">
-        <form @onsubmit="OnSendEmailVerificationAsync" @formname="send-verification" id="send-verification-form" method="post">
-            <AntiforgeryToken />
-        </form>
-        <EditForm Model="Input" FormName="change-email" OnValidSubmit="OnValidSubmitAsync" method="post">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" role="alert" />
-            @if (isEmailConfirmed)
-            {
-                <div class="form-floating mb-3 input-group">
-                    <input type="text" value="@email" id="email" class="form-control" placeholder="Enter your email" disabled />
-                    <div class="input-group-append">
-                        <span class="h-100 input-group-text text-success font-weight-bold">✓</span>
-                    </div>
-                    <label for="email" class="form-label">Email</label>
-                </div>
-            }
-            else
-            {
-                <div class="form-floating mb-3">
-                    <input type="text" value="@email" id="email" class="form-control" placeholder="Enter your email" disabled />
-                    <label for="email" class="form-label">Email</label>
-                    <button type="submit" class="btn btn-link" form="send-verification-form">Send verification email</button>
-                </div>
-            }
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.NewEmail" id="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Enter a new email" />
-                <label for="Input.NewEmail" class="form-label">New email</label>
-                <ValidationMessage For="() => Input.NewEmail" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Change email</button>
-        </EditForm>
-    </div>
-</div>
+
+<form @onsubmit="OnSendEmailVerificationAsync" @formname="send-verification" id="send-verification-form" method="post">
+    <AntiforgeryToken />
+</form>
+<EditForm Model="Input" FormName="change-email" OnValidSubmit="OnValidSubmitAsync" method="post">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="validation-errors" role="alert" />
+    @if (isEmailConfirmed)
+    {
+        <MudTextField Label="Email" Value="@email" T="string" Variant="Variant.Outlined" Class="mb-4"
+                      Disabled="true" AdornmentIcon="@Icons.Material.Filled.CheckCircle"
+                      Adornment="Adornment.End" AdornmentColor="Color.Success" />
+    }
+    else
+    {
+        <MudTextField Label="Email" Value="@email" T="string" Variant="Variant.Outlined" Class="mb-2"
+                      Disabled="true" />
+        <MudButton ButtonType="ButtonType.Submit" form="send-verification-form" Variant="Variant.Text"
+                   Color="Color.Primary" Class="mb-4">
+            Send verification email
+        </MudButton>
+    }
+    <MudTextField Label="New email" name="Input.NewEmail" @bind-Value="Input.NewEmail"
+                  For="() => Input.NewEmail" Variant="Variant.Outlined" Class="mb-4"
+                  autocomplete="email" aria-required="true" Placeholder="Enter a new email" />
+    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"
+               Size="Size.Large" FullWidth="true">
+        Change email
+    </MudButton>
+</EditForm>
 
 @code {
     private string? message;

@@ -12,22 +12,19 @@
     <DataAnnotationsValidator />
     @if (passkey?.Name is { } name)
     {
-        <h4>Enter a new name for your "@name" passkey</h4>
+        <MudText Typo="Typo.h6" GutterBottom="true">Enter a new name for your "@name" passkey</MudText>
     }
     else
     {
-        <h4>Enter a name for your passkey</h4>
+        <MudText Typo="Typo.h6" GutterBottom="true">Enter a name for your passkey</MudText>
     }
-    <hr />
-    <ValidationSummary class="text-danger" role="alert" />
-    <div class="form-floating mb-3">
-        <InputText @bind-Value="Input.Name" id="Input.Name" class="form-control" aria-required="true" placeholder="My passkey" />
-        <label for="Input.Name" class="form-label">Passkey name</label>
-        <ValidationMessage For="() => Input.Name" class="text-danger" />
-    </div>
-    <div>
-        <button type="submit" class="w-100 btn btn-lg btn-primary">Continue</button>
-    </div>
+    <ValidationSummary class="validation-errors" role="alert" />
+    <MudTextField Label="Passkey name" name="Input.Name" @bind-Value="Input.Name" For="() => Input.Name"
+                  Variant="Variant.Outlined" Class="mb-4" aria-required="true" Placeholder="My passkey" />
+    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary"
+               Size="Size.Large" FullWidth="true">
+        Continue
+    </MudButton>
 </EditForm>
 
 @code {
