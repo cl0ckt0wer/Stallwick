@@ -16,9 +16,8 @@ public class Listing
     [Range(0, 1_000_000)]
     public decimal Price { get; set; }
 
-    [Url]
     [StringLength(2000)]
-    [Display(Name = "Photo URL")]
+    [Display(Name = "Photo")]
     public string? ImageUrl { get; set; }
 
     [Required]

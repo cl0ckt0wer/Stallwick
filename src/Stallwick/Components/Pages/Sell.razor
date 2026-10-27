@@ -5,6 +5,7 @@
 @using Stallwick.Data
 @using Stallwick.Services
 @inject ListingService Listings
+@inject ImageUploadService ImageUploads
 @inject UserManager<ApplicationUser> UserManager
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
@@ -30,9 +31,20 @@
                 <MudNumericField T="decimal" Label="Price" @bind-Value="input.Price" For="@(() => input.Price)"
                                  Variant="Variant.Outlined" HideSpinButtons="true" />
             </MudItem>
-            <MudItem xs="12" sm="6">
-                <MudTextField Label="Photo URL" @bind-Value="input.ImageUrl" For="@(() => input.ImageUrl)"
-                              Variant="Variant.Outlined" Placeholder="https://…" />
+            <MudItem xs="12" sm="6" Class="d-flex flex-column justify-center">
+                <MudFileUpload T="IBrowserFile" Accept=".jpg,.jpeg,.png,.webp,.gif" FilesChanged="LoadFiles" MaximumFileCount="1">
+                    <CustomContent Context="fileUpload">
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   OnClick="@fileUpload.OpenFilePickerAsync">
+                            Upload photo
+                        </MudButton>
+                    </CustomContent>
+                </MudFileUpload>
+                @if (selectedFile is not null)
+                {
+                    <MudText Typo="Typo.caption" Class="mt-1">Selected: @selectedFile.Name</MudText>
+                }
             </MudItem>
             <MudItem xs="12">
                 <MudTextField Label="Location name" @bind-Value="input.LocationName"
@@ -76,11 +88,19 @@
 
 @code {
     private Listing input = new();
+    private IBrowserFile? selectedFile;
     private bool isSaving;
     private string? error;
 
     [CascadingParameter]
     private Task<AuthenticationState>? AuthenticationState { get; set; }
+
+    private void LoadFiles(IBrowserFile? file)
+    {
+        selectedFile = file;
+        input.ImageUrl = null;
+        error = null;
+    }
 
     private async Task UseMyLocationAsync()
     {
@@ -115,10 +135,24 @@
         isSaving = true;
         try
         {
+            if (selectedFile is not null)
+            {
+                try
+                {
+                    input.ImageUrl = await ImageUploads.SaveAsync(selectedFile);
+                }
+                catch (Exception ex)
+                {
+                    error = ex.Message;
+                    return;
+                }
+            }
+
             input.SellerId = user.Id;
             await Listings.CreateAsync(input);
             // A saved entity already has an Id, so resubmitting it would collide.
             input = new Listing();
+            selectedFile = null;
             Navigation.NavigateTo("browse");
         }
         finally

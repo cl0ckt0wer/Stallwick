@@ -41,6 +41,7 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString), ServiceLifetime.Scoped);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<ListingService>();
+builder.Services.AddScoped<ImageUploadService>();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options =>
     {
@@ -80,6 +81,17 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapGet("/uploads/{fileName}", (string fileName, ImageUploadService uploadService) =>
+{
+    var contentType = uploadService.GetContentType(fileName);
+    if (contentType is null || !uploadService.TryGetFilePath(fileName, out var filePath))
+    {
+        return Results.NotFound();
+    }
+
+    return Results.File(filePath, contentType);
+});
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();

@@ -6,9 +6,10 @@ window.stallwickGeolocation = {
                 return;
             }
             navigator.geolocation.getCurrentPosition(
+                // C# interop deserializes these property names exactly.
                 position => resolve({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
+                    Latitude: position.coords.latitude,
+                    Longitude: position.coords.longitude
                 }),
                 error => reject(error.message),
                 { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 });
